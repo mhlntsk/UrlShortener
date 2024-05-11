@@ -13,6 +13,10 @@ namespace Shortener.Data.Repositories
         {
             this.context = context;
         }
+        public async Task<bool> IsUniqueShortUrlAsync(string shortUrl)
+        {
+            return await context.URLs.AllAsync(u => u.ShortUrl != shortUrl);
+        }
         public async Task AddAsync(URL entity)
         {
             if (entity == null)
