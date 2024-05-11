@@ -10,8 +10,8 @@ namespace Shortener.Data.Data
         public ShortenerDbContext(DbContextOptions<ShortenerDbContext> options) : base(options) { }
         public ShortenerDbContext() { }
 
-        public DbSet<URL>? URLs { get; set; }
-        public DbSet<User>? Users { get; set; }
+        public DbSet<URL> URLs { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
