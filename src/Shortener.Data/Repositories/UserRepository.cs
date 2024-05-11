@@ -6,7 +6,7 @@ using Shortener.Data.Validation;
 
 namespace Shortener.Data.Repositories
 {
-    public class UserRepository : IRepository<User>
+    public class UserRepository : IUserRepository
     {
         private readonly ShortenerDbContext context;
         public UserRepository(ShortenerDbContext context)

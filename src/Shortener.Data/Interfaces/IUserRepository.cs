@@ -1,6 +1,8 @@
-﻿namespace Shortener.Data.Interfaces
+﻿using Shortener.Data.Entities;
+
+namespace Shortener.Data.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<User>
     {
     }
 }

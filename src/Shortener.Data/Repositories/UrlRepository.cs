@@ -6,7 +6,7 @@ using Shortener.Data.Validation;
 
 namespace Shortener.Data.Repositories
 {
-    public class UrlRepository : IRepository<URL>
+    public class UrlRepository : IUrlRepository
     {
         private readonly ShortenerDbContext context;
         public UrlRepository(ShortenerDbContext context)
