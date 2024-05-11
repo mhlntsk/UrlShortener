@@ -112,8 +112,8 @@ namespace Shortener.Business.Tests
                 {
                     FullUrl = "https://inforce.digital/about-us",
                     NumberOfAppeals = 0,
-                    CreatedDate = DateTime.Now.AddYears(-13),
-                    LastAppeal = DateTime.MinValue,
+                    CreatedDate = DateTime.Now.AddSeconds(-1),
+                    LastAppeal = DateTime.Now.AddYears(-13),
                     UserId = 12,
                 },
                 new UrlShortenerModel
