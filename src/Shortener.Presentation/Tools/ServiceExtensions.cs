@@ -60,6 +60,23 @@ namespace Shortener.Presentation.Tools
         }
 
         /// <summary>
+        /// Uses to set up Cors policy
+        /// </summary>
+        public static void AddCorsPolicies(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+        }
+
+        /// <summary>
         /// Configures DI-container
         /// </summary>
         public static void AddServicesIntoDI(this IServiceCollection services)
@@ -73,8 +90,6 @@ namespace Shortener.Presentation.Tools
             services.AddSingleton<IValidator<LoginViewModel>, LoginViewModelValidator>();
             services.AddSingleton<IValidator<RegisterViewModel>, RegisterViewModelValidator>();
             services.AddSingleton<IValidator<UrlShortenerModel>, UrlShortenerModelValidator>();
-
-            
 
             services.AddScoped<RoleInitializerMiddlwere>();
             services.AddScoped<AccountService>();
