@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, } from '@angular/common/http';
+import { HttpClient, HttpHeaders, } from '@angular/common/http';
 import { Url } from '../shared/Url';
 
 @Injectable({
@@ -12,16 +12,6 @@ export class UrlService {
   
   private serverLink: string = "https://localhost:7286/";
 
-  async getAllUrls(): Promise<Url[]> {
-    const data = await fetch(`${this.serverLink}/api/Url`);
-    return await data.json() ?? [];
-  }
-
-  async getUrlById(id: number): Promise<Url | undefined> {
-    const data = await fetch(`${this.serverLink}/api/Url/${id}`);
-    return await data.json() ?? {};
-  }
-
   getUrls() {
     return this.httpClient.get(`${this.serverLink}api/Url`)
   }
@@ -31,10 +21,18 @@ export class UrlService {
   }
 
   addUrl(url: Url) {
-    return this.httpClient.post(`${this.serverLink}api/Url`, url)
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+    });
+    return this.httpClient.post(`${this.serverLink}api/Url`, url, { headers: headers })
   }
 
   deleteUrl(id: number) {
-    return this.httpClient.delete(`${this.serverLink}api/Url/${id}`)
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+    });
+    return this.httpClient.delete(`${this.serverLink}api/Url/${id}`, { headers: headers })
   }
 }

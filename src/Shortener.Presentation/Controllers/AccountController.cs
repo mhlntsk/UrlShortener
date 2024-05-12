@@ -5,6 +5,8 @@ using MVC.Models.AccountViewModels;
 using MVC.Services;
 using MVC.Services.Validation;
 using Shortener.Data.Entities;
+using Shortener.Presentation.Services;
+using System.Security.Claims;
 
 namespace Shortener.Presentation.Controllers
 {
@@ -14,15 +16,16 @@ namespace Shortener.Presentation.Controllers
     {
         private readonly SignInManager<User> signInManager;
         private readonly AccountService accountService;
-        public AccountController(SignInManager<User> signInManager, AccountService accountService)
+        private readonly JwtTokenService jwtTokenService;
+
+        public AccountController(SignInManager<User> signInManager, AccountService accountService, JwtTokenService jwtTokenService)
         {
             this.signInManager = signInManager;
             this.accountService = accountService;
+            this.jwtTokenService = jwtTokenService;
         }
 
-        [HttpPost]
-        [Route("register")]
-        [ValidateAntiForgeryToken]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel, [FromServices] IValidator<RegisterViewModel> validator)
         {
             try
@@ -40,24 +43,20 @@ namespace Shortener.Presentation.Controllers
 
                 if (registrationResult.Succeeded)
                 {
-                    return Redirect("http://localhost:4200/");
+                    return Ok();
                 }
                 else
                 {
                     return BadRequest(ModelState);
                 }
-
-
             }
             catch (Exception)
             {
-                return BadRequest();
+                return StatusCode(500);
             }
         }
 
-        [HttpPost]
-        [Route("login")]
-        [ValidateAntiForgeryToken]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel, [FromServices] IValidator<LoginViewModel> validator)
         {
             try
@@ -67,20 +66,39 @@ namespace Shortener.Presentation.Controllers
                 if (!result.IsValid)
                 {
                     result.AddToModelState(this.ModelState);
-
                     return BadRequest(ModelState);
                 }
 
-                return await accountService.LoginUser(loginViewModel, this.ModelState);
+                var resultOfAuth = await accountService.LoginUser(loginViewModel, this.ModelState);
+
+                if (resultOfAuth == Microsoft.AspNetCore.Identity.SignInResult.Success)
+                {
+                    var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+                    var userRole = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+
+                    if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(userEmail) && !string.IsNullOrEmpty(userRole))
+                    {
+                        var token = jwtTokenService.GenerateToken(userId, userEmail, userRole);
+                        return Ok(new { Token = token });
+
+                    }
+                    else
+                    {
+                        return BadRequest("Failed to retrieve user information");
+                    }
+                }
+
+                return BadRequest("User is not authenticated");
+
             }
             catch (Exception)
             {
-                return BadRequest();
+                return StatusCode(500);
             }
         }
 
-        [HttpPost]
-        [Route("changePassword")]
+        [HttpPost("changePassword")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePasswordViewModel, [FromServices] IValidator<ChangePasswordViewModel> validator)
         {
@@ -99,7 +117,7 @@ namespace Shortener.Presentation.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return StatusCode(500);
             }
         }
     }

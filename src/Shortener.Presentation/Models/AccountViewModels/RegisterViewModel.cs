@@ -11,7 +11,7 @@ namespace MVC.Models.AccountViewModels
         public string? Password { get; set; }
 
         [DataType(DataType.Password)]
-        public string? ConfirmPassword { get; set; }
+        public string? PasswordConfirmation { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
     }

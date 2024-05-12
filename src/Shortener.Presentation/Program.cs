@@ -6,12 +6,16 @@ var configuration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json")
     .Build();
-builder.Services.AddCorsPolicies();
+
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddServicesIntoDI();
 builder.Services.AddAutoMapper();
+builder.Services.AddCorsPolicies();
 builder.Services.ConfigureEntityFrameworkCore(configuration);
 builder.Services.ConfigureIdentity();
+builder.Services.ConfigureAuthentication(configuration);
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Services.Validation;
 using Shortener.Business.Interfaces;
@@ -13,13 +14,14 @@ namespace Shortener.Presentation.Controllers
     public class UrlController : ControllerBase
     {
         private readonly IUrlService urlService;
-        public UrlController(IUrlService urlService)
+        private readonly JwtTokenService jwtTokenService;
+        public UrlController(IUrlService urlService, JwtTokenService jwtTokenService)
         {
             this.urlService = urlService;
+            this.jwtTokenService = jwtTokenService;
         }
 
-        [HttpGet]
-        [Route("")]
+        [HttpGet("")]
         public async Task<ActionResult<IEnumerable<UrlShortenerModel>>> GetUrls()
         {
             try
@@ -27,7 +29,7 @@ namespace Shortener.Presentation.Controllers
                 var urls = await urlService.GetAllAsync();
 
                 foreach (var url in urls)
-                    url.ShortUrl.CastUrl();
+                    url.ShortUrl = url.ShortUrl.CastUrl();
 
                 return Ok(urls);
             }
@@ -37,8 +39,7 @@ namespace Shortener.Presentation.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<UrlShortenerModel>> GetUrl(int id)
         {
             try
@@ -58,12 +59,19 @@ namespace Shortener.Presentation.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("")]
+        [HttpPost("")]
         public async Task<ActionResult> AddUrl(UrlShortenerModel url, [FromServices] IValidator<UrlShortenerModel> validator)
         {
             try
             {
+                var token = HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
+                var principal = jwtTokenService.ValidateToken(token);
+
+                if (principal == null)
+                {
+                    return Unauthorized("Invalid token");
+                }
+
                 var result = await validator.ValidateAsync(url);
 
                 if (!result.IsValid)
@@ -92,12 +100,19 @@ namespace Shortener.Presentation.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> RemoveUrl(int id)
         {
             try
             {
+                var token = HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
+                var principal = jwtTokenService.ValidateToken(token);
+
+                if (principal == null)
+                {
+                    return Unauthorized("Invalid token");
+                }
+
                 await urlService.DeleteAsync(id);
                 return Ok();
             }

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { UrlComponent } from '../url/url.component';
 import { Url } from '../../shared/Url';
 import { UrlService } from '../../services/url.service'
 import { HttpClientModule } from '@angular/common/http';
@@ -11,8 +10,6 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     CommonModule,
-    UrlComponent,
-    HttpClientModule,
     FormsModule,
   ],
   templateUrl: './home.component.html',
@@ -51,24 +48,18 @@ export class HomeComponent implements OnInit {
       },
       (error) => {
         if (error.status === 400) {
-          alert("Resource not found");
+          alert(`Bad request: ${error.error.detail}`);
         } else if (error.status === 409 ) {
-          alert(`This link already exists - ${error.error.detail}.`)
+          alert(`This link already exists - ${error.error.detail}`)
         } else if (error.status === 500 ) {
-          alert(`Internal server error.`)
+          alert(`Internal server error: ${error.error.detail}`)
         } else {
-          alert(`An error occurred while deleting the resource: ${error}`);
+          alert(`An error occurred during adding the resource: ${error.error.detail}`);
         }
       });
     }
 
     this.urlInput = '';
-  }
-
-  deleteUrl0(id: number) {
-    this.urlService.deleteUrl(id).subscribe(del => {
-      this.getUrls();
-    })
   }
 
   deleteUrl(id: number) {
@@ -77,13 +68,12 @@ export class HomeComponent implements OnInit {
       },
       (error) => {
         if (error.status === 404) {
-          alert("Resource not found");
-          console.log("Resource not found");
+          alert(`Bad request: ${error}`);
         } else if (error.status === 409 ) {
-          alert(`This link already exists - ${error.detail}`)
-          console.log(`This link already exists - ${error.detail}`);
+          alert(`This link already exists - ${error}`)
         } else {
-          console.error('Помилка при видаленні ресурсу:', error);
+          alert(`An error occurred while deleting: ${error}`);
+          console.error('An error occurred while deleting:', error);
         }
       }
     );

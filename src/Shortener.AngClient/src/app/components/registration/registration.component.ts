@@ -10,15 +10,13 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css'
 })
 export class RegistrationComponent implements OnInit {
-  private authSubscription: Subscription | undefined; //ToDo
-  errorMessage: string | undefined; //ToDo
-  
+  private authSubscription: Subscription | undefined;
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
 
@@ -41,7 +39,7 @@ export class RegistrationComponent implements OnInit {
   }
 
   createFormControls() {
-    this.firstName = new FormControl("type your name...", Validators.required);
+    this.firstName = new FormControl("", Validators.required);
     this.lastName = new FormControl("");
     this.email = new FormControl("", [Validators.required, Validators.email]);
     this.password = new FormControl("", [Validators.required, Validators.minLength(6)]);
@@ -66,12 +64,20 @@ export class RegistrationComponent implements OnInit {
 
   register(): void {
     this.authSubscription = this.authService.register(this.registrationForm?.value).subscribe({
-      next: () => {
-        this.router.navigate(["/"]);
+      next: obj => {
+        console.log(obj);
+        this.router.navigate(["auth/login"]);
       },
       error: (error) => {
-        this.errorMessage = error.message;
+        if (error.status === 400) {
+          alert(`Bad request: ${error.error.detail}`);
+        } else if (error.status === 500 ) {
+          alert(`Internal server error: ${error.error.detail}`)
+        } else {
+          alert(`An error occurred during registration: ${error.error.detail}`);
+        }
       }
     });
   }
+
 }

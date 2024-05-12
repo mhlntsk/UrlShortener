@@ -45,7 +45,7 @@ namespace Shortener.Business.Services
 
                 await unitOfWork.SaveAsync();
             }
-            catch (AlreadyExistException ex)
+            catch (AlreadyExistException)
             {
                 throw;
             }
@@ -156,10 +156,11 @@ namespace Shortener.Business.Services
                 throw new ShortenerException("Invalid UrlShortenerModel.LastAppeal");
             }
 
-            if (model.UserId < 1)
-            {
-                throw new ShortenerException("Invalid UrlShortenerModel.UserId");
-            }
+            //TODO
+            //if (model.UserId < 1)
+            //{
+            //    throw new ShortenerException("Invalid UrlShortenerModel.UserId");
+            //}
         }
     }
 }

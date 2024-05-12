@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { RouterModule } from '@angular/router';
 
-import { UrlComponent } from './components/url/url.component';
 import { UrlDetailsComponent } from './components/url-details/url-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UrlService } from './services/url.service';
 import { HttpClientModule } from '@angular/common/http';
+import { AuthService } from './services/auth.service';
+import { CommonModule } from '@angular/common';
+import { AboutComponent } from './components/about/about.component';
 
 @Component({
   standalone: true,
@@ -16,20 +18,26 @@ import { HttpClientModule } from '@angular/common/http';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   imports:[
-    RegistrationComponent,
-    LoginComponent,
-    HomeComponent,
     RouterModule, 
     HttpClientModule,
-    
-    UrlComponent,
+    CommonModule,
+
+    ReactiveFormsModule,
     UrlDetailsComponent,
-    ReactiveFormsModule
   ],
   providers: [
-    UrlService
+    UrlService,
+    AuthService
   ],
 })
 export class AppComponent {
-  title = 'Shortener';
+  authService: AuthService = inject(AuthService);
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
 }

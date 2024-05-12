@@ -29,7 +29,7 @@ namespace MVC.Tools.Validation.Account
                 .Matches("[0-9]").WithMessage("The password must contain at least one number")
                 .Matches("[_\\-!@#$%^&*(),.?\":{}|<>]").WithMessage("The password must contain at least one special character");
 
-            RuleFor(x => x.ConfirmPassword)
+            RuleFor(x => x.PasswordConfirmation)
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(8).WithMessage("Min length is 8")
                 .MaximumLength(100).WithMessage("Max length is 100")

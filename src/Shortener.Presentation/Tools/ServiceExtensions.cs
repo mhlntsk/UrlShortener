@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MVC.Models.AccountViewModels;
 using MVC.Services;
 using MVC.Tools.Validation.Account;
@@ -15,6 +17,7 @@ using Shortener.Data.Interfaces;
 using Shortener.Data.Repositories;
 using Shortener.Presentation.Services;
 using Shortener.Presentation.Tools.Validation.Url;
+using System.Text;
 
 namespace Shortener.Presentation.Tools
 {
@@ -26,10 +29,10 @@ namespace Shortener.Presentation.Tools
         /// <summary>
         /// Configures Entity Framework DbContext for the project.
         /// </summary>
-        public static void ConfigureEntityFrameworkCore(this IServiceCollection services, IConfiguration Configuration)
+        public static void ConfigureEntityFrameworkCore(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ShortenerDbContext>(builder =>
-                builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Shortener.Presentation")));
+                builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Shortener.Presentation")));
         }
 
         /// <summary>
@@ -45,6 +48,27 @@ namespace Shortener.Presentation.Tools
             })
             .AddEntityFrameworkStores<ShortenerDbContext>()
             .AddDefaultTokenProviders();
+        }
+
+        /// <summary>
+        /// Configures authentication with JwtBearer.
+        /// </summary>
+        public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["shortener_issuer"],
+                        ValidAudience = configuration["shortener_audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["my_secret_key"]!))
+                    };
+                });
         }
 
         /// <summary>
@@ -93,6 +117,7 @@ namespace Shortener.Presentation.Tools
 
             services.AddScoped<RoleInitializerMiddlwere>();
             services.AddScoped<AccountService>();
+            services.AddScoped<JwtTokenService>();
         }
 
     }

@@ -7,34 +7,25 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'https://localhost:7286/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
+  //httpClient: HttpClient = inject(HttpClient);
 
-  register(userData: { 
-      firstName: string; 
-      lastName: string; 
-      email: string; 
-      password: string; 
-      passwordConfirmation: string 
-    }): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/auth/register`, userData);
+  private serverLink: string = "https://localhost:7286/";
+
+  register(userData: { firstName: string; lastName: string; email: string; password: string; passwordConfirmation: string }) {
+    return this.httpClient.post(`${this.serverLink}api/auth/register`, userData);
   }
-  
-  login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/auth/login`, credentials).pipe(
-      map(response => {
-        localStorage.setItem('accessToken', response.accessToken);
-        return response;
-      })
-    );
+
+  login(credentials: { email: string; password: string, rememberMe: boolean, returnUrl: string }) : Observable<any> {
+    return this.httpClient.post<any>(`${this.serverLink}api/auth/login`, credentials);
   }
 
   logout(): void {
     localStorage.removeItem('accessToken');
   }
 
-  isLoggedIn(): boolean {
+  isAuthenticated(): boolean {
     return !!localStorage.getItem('accessToken');
   }
 }
