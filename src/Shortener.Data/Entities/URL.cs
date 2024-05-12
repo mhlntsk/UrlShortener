@@ -8,6 +8,6 @@
         public DateTime LastAppeal {  get; set; }
         public int NumberOfAppeals { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 }
