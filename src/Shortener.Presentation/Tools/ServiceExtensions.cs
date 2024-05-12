@@ -58,6 +58,7 @@ namespace Shortener.Presentation.Tools
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUrlRepository, UrlRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUrlService, UrlService>();
 
             services.AddScoped<RoleInitializerMiddlwere>();
             services.AddScoped<AccountService>();

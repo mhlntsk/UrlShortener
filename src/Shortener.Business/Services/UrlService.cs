@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Shortener.Business.Interfaces;
 using Shortener.Business.Models;
 using Shortener.Business.Tools;
@@ -82,6 +83,20 @@ namespace Shortener.Business.Services
                 var url = await urlRepository.GetByIdAsync(id);
 
                 return mapper.Map<UrlShortenerModel>(url);
+            }
+            catch (Exception ex)
+            {
+                throw new ShortenerException(ex.Message);
+            }
+        }
+        
+        public async Task<string> GetByShortedUrlAsync(string shortedUrl)
+        {
+            try
+            {
+                var url = await urlRepository.GetAll().FirstOrDefaultAsync(url => url.ShortUrl == shortedUrl);
+
+                return url!.FullUrl;
             }
             catch (Exception ex)
             {
