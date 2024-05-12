@@ -9,8 +9,6 @@ namespace Shortener.Data.Data
 
         private IUrlRepository? urlRepository;
 
-        private IUserRepository? userRepository;
-
         public UnitOfWork(ShortenerDbContext context)
         {
             this.context = context;
@@ -25,18 +23,6 @@ namespace Shortener.Data.Data
                     urlRepository = new UrlRepository(context);
                 }
                 return urlRepository;
-            }
-        }
-
-        public IUserRepository UserRepository
-        {
-            get
-            {
-                if (userRepository == null)
-                {
-                    userRepository = new UserRepository(context);
-                }
-                return userRepository;
             }
         }
 

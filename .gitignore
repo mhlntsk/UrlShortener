@@ -336,8 +336,7 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
-/SportsSln/SportsStore/Properties/launchSettings.json
-/SportsSln/SportsStore/global.json
-/SportsSln/SportsStore/appsettings.Development.json
-/SportsSln/SportsStore/appsettings.json
-/SportsSln/SportsStore/Migrations
+
+appsettings.json
+
+/src/Shortener.Presentation/Migrations
