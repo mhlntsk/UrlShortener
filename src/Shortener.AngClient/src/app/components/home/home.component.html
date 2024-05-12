@@ -1,8 +1,35 @@
-<p>home works!</p>
+<section>
+    <form class="form-inline justify-content-center">
+        <div class="form-group mx-sm-3 mb-2">
+            <input type="text" class="form-control" style="width: 250px;" placeholder="Past your link right here!" #link
+                [(ngModel)]="urlInput" name="urlInput">
+            <button class="btn btn-sm btn-secondary mb-2" type="button" (click)="addNewUrl()">Generate new short
+                link!</button>
+        </div>
+    </form>
+</section>
 
-  <section>
-    <app-url
-      *ngFor="let url of urlsList"
-      [url]="url">
-    </app-url>
-  </section>
+<section class="results">
+
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Full URL</th>
+                <th>Short URL</th>
+                <th>Created Date</th>
+                <th>Number of Appeals</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let url of urlsList">
+                <td>{{ url.fullUrl }}</td>
+                <td>{{ url.shortUrl }}</td>
+                <td>{{ url.createdDate }}</td>
+                <td>{{ url.numberOfAppeals }}</td>
+                <td><button class="btn btn-danger" (click)="deleteUrl(url.id)">Видалити</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+</section>

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GetDataService } from '../../services/urls.service';
+import { UrlService } from '../../services/url.service';
 import { Url } from '../../shared/Url';
 
 @Component({
@@ -14,7 +14,7 @@ import { Url } from '../../shared/Url';
   styleUrl: './url-details.component.css'
 })
 export class UrlDetailsComponent {
-  getDataService = inject(GetDataService);
+  urlService = inject(UrlService);
   url: Url | undefined;
 
   route: ActivatedRoute = inject(ActivatedRoute);
@@ -22,7 +22,7 @@ export class UrlDetailsComponent {
   constructor() {
     const urlId = Number(this.route.snapshot.params['id']);
 
-    this.getDataService.getShorteredUrlsById(urlId).then(url => {
+    this.urlService.getUrlById(urlId).then(url => {
       this.url = url;
     });
   }

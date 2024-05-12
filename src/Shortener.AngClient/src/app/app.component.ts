@@ -7,7 +7,8 @@ import { RouterModule } from '@angular/router';
 import { UrlComponent } from './components/url/url.component';
 import { UrlDetailsComponent } from './components/url-details/url-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GetDataService } from './services/urls.service';
+import { UrlService } from './services/url.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   standalone: true,
@@ -19,13 +20,14 @@ import { GetDataService } from './services/urls.service';
     LoginComponent,
     HomeComponent,
     RouterModule, 
+    HttpClientModule,
     
     UrlComponent,
     UrlDetailsComponent,
     ReactiveFormsModule
   ],
   providers: [
-    GetDataService
+    UrlService
   ],
 })
 export class AppComponent {
