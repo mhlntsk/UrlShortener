@@ -1,11 +1,20 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MVC.Models.AccountViewModels;
+using MVC.Services;
+using MVC.Tools.Validation.Account;
 using Shortener.Business;
+using Shortener.Business.Interfaces;
+using Shortener.Business.Models;
+using Shortener.Business.Services;
 using Shortener.Data.Data;
 using Shortener.Data.Entities;
 using Shortener.Data.Interfaces;
 using Shortener.Data.Repositories;
+using Shortener.Presentation.Services;
+using Shortener.Presentation.Tools.Validation.Url;
 
 namespace Shortener.Presentation.Tools
 {
@@ -57,8 +66,15 @@ namespace Shortener.Presentation.Tools
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUrlRepository, UrlRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+
             services.AddScoped<IUrlService, UrlService>();
+
+            services.AddSingleton<IValidator<ChangePasswordViewModel>, ChangePasswordViewModelValidator>();
+            services.AddSingleton<IValidator<LoginViewModel>, LoginViewModelValidator>();
+            services.AddSingleton<IValidator<RegisterViewModel>, RegisterViewModelValidator>();
+            services.AddSingleton<IValidator<UrlShortenerModel>, UrlShortenerModelValidator>();
+
+            
 
             services.AddScoped<RoleInitializerMiddlwere>();
             services.AddScoped<AccountService>();
