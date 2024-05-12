@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Shortener.Data.Interfaces
+﻿namespace Shortener.Data.Interfaces
 {
     public interface IBaseEntity
     {

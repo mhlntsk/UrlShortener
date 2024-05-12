@@ -4,8 +4,6 @@
     {
         IUrlRepository UrlRepository { get; }
 
-        IUserRepository UserRepository { get; }
-
         Task SaveAsync();
     }
 }
