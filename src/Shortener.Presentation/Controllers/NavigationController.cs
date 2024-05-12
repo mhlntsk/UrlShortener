@@ -7,10 +7,10 @@ namespace Shortener.Presentation.Controllers
 {
     [Route("nav")]
     [ApiController]
-    public class NavigationApiController : ControllerBase
+    public class NavigationController : ControllerBase
     {
         private readonly IUrlService urlService;
-        public NavigationApiController(IUrlService urlService)
+        public NavigationController(IUrlService urlService)
         {
             this.urlService = urlService;
         }

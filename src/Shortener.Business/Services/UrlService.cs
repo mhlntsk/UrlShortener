@@ -6,6 +6,7 @@ using Shortener.Business.Tools;
 using Shortener.Business.Validation;
 using Shortener.Data.Entities;
 using Shortener.Data.Interfaces;
+using Shortener.Data.Validation;
 
 namespace Shortener.Business.Services
 {
@@ -31,6 +32,8 @@ namespace Shortener.Business.Services
             {
                 Validate(model);
 
+                await urlRepository.CheckIfUniqueFullUrlAsync(model.FullUrl);
+                
                 do
                 {
                     model.GenerateShortUrl();
@@ -41,6 +44,10 @@ namespace Shortener.Business.Services
                 await urlRepository.AddAsync(url);
 
                 await unitOfWork.SaveAsync();
+            }
+            catch (AlreadyExistException ex)
+            {
+                throw;
             }
             catch (Exception ex)
             {

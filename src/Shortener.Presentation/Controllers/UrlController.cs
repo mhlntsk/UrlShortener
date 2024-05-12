@@ -3,27 +3,31 @@ using Microsoft.AspNetCore.Mvc;
 using MVC.Services.Validation;
 using Shortener.Business.Interfaces;
 using Shortener.Business.Models;
+using Shortener.Data.Validation;
 using Shortener.Presentation.Services;
 
 namespace Shortener.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UrlApiController : ControllerBase
+    public class UrlController : ControllerBase
     {
         private readonly IUrlService urlService;
-        public UrlApiController(IUrlService urlService)
+        public UrlController(IUrlService urlService)
         {
             this.urlService = urlService;
         }
 
         [HttpGet]
-        [Route("urls")]
+        [Route("")]
         public async Task<ActionResult<IEnumerable<UrlShortenerModel>>> GetUrls()
         {
             try
             {
                 var urls = await urlService.GetAllAsync();
+
+                foreach (var url in urls)
+                    url.ShortUrl.CastUrl();
 
                 return Ok(urls);
             }
@@ -34,7 +38,7 @@ namespace Shortener.Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("urls/{id}")]
+        [Route("{id}")]
         public async Task<ActionResult<UrlShortenerModel>> GetUrl(int id)
         {
             try
@@ -55,12 +59,12 @@ namespace Shortener.Presentation.Controllers
         }
 
         [HttpPost]
-        [Route("urls/add")]
-        public async Task<ActionResult> AddUrl(UrlShortenerModel model, [FromServices] IValidator<UrlShortenerModel> validator)
+        [Route("")]
+        public async Task<ActionResult> AddUrl(UrlShortenerModel url, [FromServices] IValidator<UrlShortenerModel> validator)
         {
             try
             {
-                var result = await validator.ValidateAsync(model);
+                var result = await validator.ValidateAsync(url);
 
                 if (!result.IsValid)
                 {
@@ -69,9 +73,18 @@ namespace Shortener.Presentation.Controllers
                     return BadRequest(ModelState);
                 }
 
-                await urlService.AddAsync(model);
+                await urlService.AddAsync(url);
 
                 return Ok();
+            }
+            catch (AlreadyExistException ex)
+            {
+                return Conflict(new ProblemDetails
+                {
+                    Status = 409,
+                    Title = "Such link already exists!",
+                    Detail = $"{ex.Message}"
+                });
             }
             catch (Exception)
             {
@@ -80,7 +93,7 @@ namespace Shortener.Presentation.Controllers
         }
 
         [HttpDelete]
-        [Route("urls/delete/{id}")]
+        [Route("{id}")]
         public async Task<ActionResult> RemoveUrl(int id)
         {
             try

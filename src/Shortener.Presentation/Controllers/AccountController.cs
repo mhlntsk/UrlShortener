@@ -10,11 +10,11 @@ namespace Shortener.Presentation.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AccountApiController : ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly SignInManager<User> signInManager;
         private readonly AccountService accountService;
-        public AccountApiController(SignInManager<User> signInManager, AccountService accountService)
+        public AccountController(SignInManager<User> signInManager, AccountService accountService)
         {
             this.signInManager = signInManager;
             this.accountService = accountService;
