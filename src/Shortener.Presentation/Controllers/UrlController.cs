@@ -87,11 +87,12 @@ namespace Shortener.Presentation.Controllers
             }
             catch (AlreadyExistException ex)
             {
+                var existingUrl = ex.Message.CastUrl();
                 return Conflict(new ProblemDetails
                 {
                     Status = 409,
                     Title = "Such link already exists!",
-                    Detail = $"{ex.Message}"
+                    Detail = $"{existingUrl}"
                 });
             }
             catch (Exception)
