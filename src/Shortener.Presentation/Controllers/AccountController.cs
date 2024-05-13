@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MVC.Models.AccountViewModels;
 using MVC.Services;
 using MVC.Services.Validation;
+using Shortener.Business.Services;
 using Shortener.Data.Entities;
 using Shortener.Presentation.Services;
 using System.Security.Claims;
@@ -75,12 +76,12 @@ namespace Shortener.Presentation.Controllers
                 {
                     var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
-                    var userRole = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+                    var userRole = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? "user";
 
                     if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(userEmail) && !string.IsNullOrEmpty(userRole))
                     {
                         var token = jwtTokenService.GenerateToken(userId, userEmail, userRole);
-                        return Ok(new { Token = token });
+                        return Ok(new { Token = token, UserId = userId, UserRole = userRole });
 
                     }
                     else

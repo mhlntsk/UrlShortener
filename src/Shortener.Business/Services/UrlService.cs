@@ -103,7 +103,19 @@ namespace Shortener.Business.Services
             {
                 var url = await urlRepository.GetAll().FirstOrDefaultAsync(url => url.ShortUrl == shortedUrl);
 
+                if (url == null)
+                    throw new DatabaseDoesntContainException("An entry with such shortenedUrl was not found in the database");
+
+                url.NumberOfAppeals++;
+
+                await urlRepository.Update(url);
+                await unitOfWork.SaveAsync();
+
                 return url!.FullUrl;
+            }
+            catch (DatabaseDoesntContainException ex)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -156,11 +168,10 @@ namespace Shortener.Business.Services
                 throw new ShortenerException("Invalid UrlShortenerModel.LastAppeal");
             }
 
-            //TODO
-            //if (model.UserId < 1)
-            //{
-            //    throw new ShortenerException("Invalid UrlShortenerModel.UserId");
-            //}
+            if (model.UserId < 1)
+            {
+                throw new ShortenerException("Invalid UrlShortenerModel.UserId");
+            }
         }
     }
 }

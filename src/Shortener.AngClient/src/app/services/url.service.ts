@@ -6,9 +6,7 @@ import { Url } from '../shared/Url';
   providedIn: 'root'
 })
 export class UrlService {
-
-  constructor(private httpClient: HttpClient){}
-  //httpClient: HttpClient = inject(HttpClient);
+  httpClient: HttpClient = inject(HttpClient);
   
   private serverLink: string = "https://localhost:7286/";
 

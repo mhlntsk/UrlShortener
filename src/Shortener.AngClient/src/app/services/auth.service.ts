@@ -1,15 +1,12 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  constructor(private httpClient: HttpClient) { }
-  //httpClient: HttpClient = inject(HttpClient);
+  httpClient: HttpClient = inject(HttpClient);
 
   private serverLink: string = "https://localhost:7286/";
 
@@ -17,12 +14,14 @@ export class AuthService {
     return this.httpClient.post(`${this.serverLink}api/auth/register`, userData);
   }
 
-  login(credentials: { email: string; password: string, rememberMe: boolean, returnUrl: string }) : Observable<any> {
+  login(credentials: { email: string; password: string, rememberMe: boolean, returnUrl: string }): Observable<any> {
     return this.httpClient.post<any>(`${this.serverLink}api/auth/login`, credentials);
   }
 
   logout(): void {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
   }
 
   isAuthenticated(): boolean {

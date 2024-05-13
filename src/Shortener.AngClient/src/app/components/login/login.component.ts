@@ -58,6 +58,8 @@ export class LoginComponent implements OnInit {
     this.authSubscription = this.authService.login(this.AuthenticationForm?.value).subscribe({
       next: resp => {
         localStorage.setItem('accessToken', resp.token);
+        localStorage.setItem('userId', resp.userId);
+        localStorage.setItem('userRole', resp.userRole);
         this.router.navigate(["/"]);
       },
       error: (error) => {
@@ -71,6 +73,5 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-
   
 }

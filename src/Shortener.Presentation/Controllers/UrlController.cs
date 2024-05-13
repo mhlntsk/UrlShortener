@@ -49,7 +49,7 @@ namespace Shortener.Presentation.Controllers
                 if (url == null)
                     return NoContent();
 
-                url.ShortUrl.CastUrl();
+                url.ShortUrl = url.ShortUrl.CastUrl();
 
                 return Ok(url);
             }
