@@ -107,6 +107,7 @@ namespace Shortener.Business.Services
                     throw new DatabaseDoesntContainException("An entry with such shortenedUrl was not found in the database");
 
                 url.NumberOfAppeals++;
+                url.LastAppeal = DateTime.Now;
 
                 await urlRepository.Update(url);
                 await unitOfWork.SaveAsync();
