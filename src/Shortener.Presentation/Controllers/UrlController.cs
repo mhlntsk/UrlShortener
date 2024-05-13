@@ -15,10 +15,12 @@ namespace Shortener.Presentation.Controllers
     {
         private readonly IUrlService urlService;
         private readonly JwtTokenService jwtTokenService;
-        public UrlController(IUrlService urlService, JwtTokenService jwtTokenService)
+        private readonly UrlCasttService urlCasttService;
+        public UrlController(IUrlService urlService, JwtTokenService jwtTokenService, UrlCasttService urlCasttService)
         {
             this.urlService = urlService;
             this.jwtTokenService = jwtTokenService;
+            this.urlCasttService = urlCasttService;
         }
 
         [HttpGet("")]
@@ -29,7 +31,7 @@ namespace Shortener.Presentation.Controllers
                 var urls = await urlService.GetAllAsync();
 
                 foreach (var url in urls)
-                    url.ShortUrl = url.ShortUrl.CastUrl();
+                    url.ShortUrl = urlCasttService.CastUrl(url.ShortUrl);
 
                 return Ok(urls);
             }
@@ -49,7 +51,7 @@ namespace Shortener.Presentation.Controllers
                 if (url == null)
                     return NoContent();
 
-                url.ShortUrl = url.ShortUrl.CastUrl();
+                url.ShortUrl = urlCasttService.CastUrl(url.ShortUrl);
 
                 return Ok(url);
             }
@@ -87,7 +89,7 @@ namespace Shortener.Presentation.Controllers
             }
             catch (AlreadyExistException ex)
             {
-                var existingUrl = ex.Message.CastUrl();
+                var existingUrl = urlCasttService.CastUrl(ex.Message);
                 return Conflict(new ProblemDetails
                 {
                     Status = 409,

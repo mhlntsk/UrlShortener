@@ -118,6 +118,7 @@ namespace Shortener.Presentation.Tools
             services.AddScoped<RoleInitializerMiddlwere>();
             services.AddScoped<AccountService>();
             services.AddScoped<JwtTokenService>();
+            services.AddScoped<UrlCasttService>();
         }
 
     }
