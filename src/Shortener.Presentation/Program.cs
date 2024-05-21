@@ -15,6 +15,7 @@ builder.Services.AddCorsPolicies();
 builder.Services.ConfigureEntityFrameworkCore(configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureAuthentication(configuration);
+builder.Services.AddSwagger();
 
 var app = builder.Build();
 
@@ -33,6 +34,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

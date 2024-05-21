@@ -84,9 +84,21 @@ namespace Shortener.Presentation.Tools
         }
 
         /// <summary>
-        /// Uses to set up Cors policy
+        /// Configures Swagger
         /// </summary>
-        public static void AddCorsPolicies(this IServiceCollection services)
+        public static void AddSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "My API", Version = "v1" });
+            });
+        }
+
+
+/// <summary>
+/// Uses to set up Cors policy
+/// </summary>
+public static void AddCorsPolicies(this IServiceCollection services)
         {
             services.AddCors(options =>
             {
