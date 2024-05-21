@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shortener.Business.Interfaces;
 using Shortener.Business.Models;
-using Shortener.Presentation.Services;
 
 namespace Shortener.Presentation.Controllers
 {
@@ -15,8 +14,7 @@ namespace Shortener.Presentation.Controllers
             this.urlService = urlService;
         }
 
-        [HttpGet]
-        [Route("{shortedUrl}")]
+        [HttpGet("{shortedUrl}")]
         public async Task<ActionResult<UrlShortenerModel>> GetUrl(string shortedUrl)
         {
             try
