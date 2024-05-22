@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, } from '@angular/common/http';
 import { Url } from '../shared/Url';
+import { tap } from 'rxjs/internal/operators/tap';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class UrlService {
   
   getUrl(id: number) {
     return this.httpClient.get(`${this.serverLink}api/Url/${id}`)
+    .pipe(tap(_ => console.log("Url received: ", _)));
   }
 
   addUrl(url: Url) {
