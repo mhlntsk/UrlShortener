@@ -45,8 +45,10 @@ export class HomeComponent implements OnInit {
   }
 
   getUrls() {
-    this.urlService.getUrls().subscribe(urlsList => {
-      this.urlsList = urlsList;
+    this.urlService.getUrls().subscribe({
+      next: urlsList => {
+        this.urlsList = urlsList;
+      }
     });
   }
 
@@ -63,10 +65,11 @@ export class HomeComponent implements OnInit {
         userId: Number(localStorage.getItem('userId')),
       }
 
-      this.urlService.addUrl(urlToPush).subscribe(() => {
-        this.getUrls();
-      },
-        (error) => {
+      this.urlService.addUrl(urlToPush).subscribe({
+        next: _ => {
+          this.getUrls();
+        },
+        error: error => {
           if (error.status === 400) {
             alert(`Bad request: ${error.error.detail}`);
           } else if (error.status === 409) {
@@ -76,17 +79,22 @@ export class HomeComponent implements OnInit {
           } else {
             alert(`An error occurred during adding the resource: ${error.error.detail}`);
           }
-        });
+        },
+        complete() {
+
+        }
+      });
     }
 
     this.urlInput = '';
   }
 
   deleteUrl(id: number) {
-    this.urlService.deleteUrl(id).subscribe(() => {
-      this.getUrls();
-    },
-      (error) => {
+    this.urlService.deleteUrl(id).subscribe({
+      next: _ => {
+        this.getUrls();
+      },
+      error: error => {
         if (error.status === 404) {
           alert(`Bad request: ${error}`);
         } else if (error.status === 409) {
@@ -96,8 +104,6 @@ export class HomeComponent implements OnInit {
           console.error('An error occurred while deleting:', error);
         }
       }
-    );
+    });
   }
-
-
 }
