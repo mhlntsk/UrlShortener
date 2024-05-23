@@ -15,8 +15,8 @@ namespace Shortener.Presentation.Controllers
     {
         private readonly IUrlService urlService;
         private readonly JwtTokenService jwtTokenService;
-        private readonly UrlCasttService urlCasttService;
-        public UrlController(IUrlService urlService, JwtTokenService jwtTokenService, UrlCasttService urlCasttService)
+        private readonly UrlCastService urlCasttService;
+        public UrlController(IUrlService urlService, JwtTokenService jwtTokenService, UrlCastService urlCasttService)
         {
             this.urlService = urlService;
             this.jwtTokenService = jwtTokenService;

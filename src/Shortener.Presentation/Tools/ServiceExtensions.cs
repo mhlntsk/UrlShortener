@@ -130,7 +130,7 @@ public static void AddCorsPolicies(this IServiceCollection services)
             services.AddScoped<RoleInitializerMiddlwere>();
             services.AddScoped<AccountService>();
             services.AddScoped<JwtTokenService>();
-            services.AddScoped<UrlCasttService>();
+            services.AddScoped<UrlCastService>();
         }
 
     }

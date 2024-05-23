@@ -1,9 +1,9 @@
 ﻿namespace Shortener.Presentation.Services
 {
-    public class UrlCasttService
+    public class UrlCastService
     {
         private readonly IConfiguration configuration;
-        public UrlCasttService(IConfiguration configuration)
+        public UrlCastService(IConfiguration configuration)
         {
             this.configuration = configuration;
         }
