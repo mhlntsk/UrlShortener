@@ -25,7 +25,8 @@ export class RegistrationComponent implements OnInit {
   private router: Router = inject(Router);
 
   emailExists = false;
-
+  isCheckingEmail = false;
+  
   registrationForm!: FormGroup;
   firstName!: FormControl;
   lastName!: FormControl;
@@ -70,6 +71,7 @@ export class RegistrationComponent implements OnInit {
         distinctUntilChanged(),
         switchMap(value => {
           if (this.registrationForm.get('email')!.valid) {
+            this.isCheckingEmail = true;
             return this.authService.checkEmail(value);
           } else {
             return of(null);
@@ -79,8 +81,10 @@ export class RegistrationComponent implements OnInit {
         next: response => {
           this.emailExists = response ? response.exists : false;
           this.updateEmailValidators();
+          this.isCheckingEmail = false;
         },
         error: (error) => {
+          this.isCheckingEmail = false;
           if (error.status === 400) {
             alert(`Bad request: ${error.error.detail}`);
           } else if (error.status === 500) {

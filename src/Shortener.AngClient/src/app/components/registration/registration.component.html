@@ -22,6 +22,7 @@
             'has-success': email.valid && email.dirty }">
             <label for="email">Email</label>
             <input id="email" type="email" class="form-control" formControlName="email" placeholder="I'll write to you at night, babe!">
+            <span *ngIf="isCheckingEmail"><i class="fas fa-spinner fa-spin"></i></span>
             <div class="alert alert-danger" *ngIf="email.errors && (email.dirty || email.touched)">
                 <p *ngIf="email.errors['required']">Field required</p>
                 <p *ngIf="email.errors['pattern']">Wrong email format</p>
