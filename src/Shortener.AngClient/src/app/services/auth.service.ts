@@ -10,6 +10,10 @@ export class AuthService {
 
   private serverLink: string = "https://localhost:7286/";
 
+  checkEmail(email: string) : Observable<any> {
+    return this.httpClient.get(`${this.serverLink}api/auth/checkEmail?email=${email}`)
+  }
+
   register(userData: { firstName: string; lastName: string; email: string; password: string; passwordConfirmation: string }) {
     return this.httpClient.post(`${this.serverLink}api/auth/register`, userData);
   }

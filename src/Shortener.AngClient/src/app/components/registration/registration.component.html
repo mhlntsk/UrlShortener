@@ -25,7 +25,8 @@
             <div class="alert alert-danger" *ngIf="email.errors && (email.dirty || email.touched)">
                 <p *ngIf="email.errors['required']">Field required</p>
                 <p *ngIf="email.errors['pattern']">Wrong email format</p>
-                <p *ngIf="email.errors['email']">Wrong email format</p>
+                <p *ngIf="email.errors['invalidEmail']">Wrong email format</p>
+                <p *ngIf="email.errors['emailExists']">Email alredy exists</p>
             </div>
         </div>
     

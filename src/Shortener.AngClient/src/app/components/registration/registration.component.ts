@@ -1,9 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { emailValidator } from './validators/email.validator';
+import { emailExistsValidator } from './validators/email.exists.validator';
 
 @Component({
   selector: 'app-registration',
@@ -17,8 +19,12 @@ import { CommonModule } from '@angular/common';
 })
 export class RegistrationComponent implements OnInit {
   private authSubscription: Subscription | undefined;
+  private checkEmailSubscription: Subscription | undefined;
+
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
+
+  emailExists = false;
 
   registrationForm!: FormGroup;
   firstName!: FormControl;
@@ -30,18 +36,13 @@ export class RegistrationComponent implements OnInit {
   ngOnInit(): void {
     this.createFormControls();
     this.createForm();
-  }
-
-  ngOnDestroy(): void {
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
+    this.checkEmail();
   }
 
   createFormControls() {
     this.firstName = new FormControl("", Validators.required);
     this.lastName = new FormControl("");
-    this.email = new FormControl("", [Validators.required, Validators.email]);
+    this.email = new FormControl("", [Validators.required, emailValidator(), emailExistsValidator(() => this.emailExists)]);
     this.password = new FormControl("", [Validators.required, Validators.minLength(6)]);
     this.passwordConfirmation = new FormControl("", Validators.required);
   }
@@ -62,7 +63,43 @@ export class RegistrationComponent implements OnInit {
     }
   }
 
-  register(): void {
+  checkEmail() {
+    this.checkEmailSubscription = this.registrationForm?.get('email')!.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        switchMap(value => {
+          if (this.registrationForm.get('email')!.valid) {
+            return this.authService.checkEmail(value);
+          } else {
+            return of(null);
+          }
+        })
+      ).subscribe({
+        next: response => {
+          this.emailExists = response ? response.exists : false;
+          this.updateEmailValidators();
+        },
+        error: (error) => {
+          if (error.status === 400) {
+            alert(`Bad request: ${error.error.detail}`);
+          } else if (error.status === 500) {
+            alert(`Internal server error: ${error.error.detail}`)
+          } else {
+            alert(`An error occurred during email checking: ${error.error.detail}`);
+          }
+        }
+      });
+  }
+
+  updateEmailValidators() {
+    const emailControl = this.registrationForm.get('email');
+    if (emailControl) {
+      emailControl.updateValueAndValidity();
+    }
+  }
+
+  register() {
     this.authSubscription = this.authService.register(this.registrationForm?.value).subscribe({
       next: obj => {
         console.log(obj);
@@ -71,7 +108,7 @@ export class RegistrationComponent implements OnInit {
       error: (error) => {
         if (error.status === 400) {
           alert(`Bad request: ${error.error.detail}`);
-        } else if (error.status === 500 ) {
+        } else if (error.status === 500) {
           alert(`Internal server error: ${error.error.detail}`)
         } else {
           alert(`An error occurred during registration: ${error.error.detail}`);
@@ -80,4 +117,10 @@ export class RegistrationComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.authSubscription) {
+      this.authSubscription?.unsubscribe();
+      this.checkEmailSubscription?.unsubscribe();
+    }
+  }
 }

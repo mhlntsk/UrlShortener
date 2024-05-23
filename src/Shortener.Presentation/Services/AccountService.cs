@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using MVC.Models.AccountViewModels;
 using Shortener.Data.Entities;
 
@@ -17,6 +16,17 @@ namespace MVC.Services
             this.signInManager = signInManager;
         }
 
+        public async Task<bool> CheckIfEmailExists(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
         public async Task<IdentityResult> RegisterUser(RegisterViewModel model, ModelStateDictionary ModelState)
         {
             User user = new User { Email = model.Email, UserName = model.Email, FirstName = model.FirstName!, LastName = model.LastName };

@@ -26,6 +26,19 @@ namespace Shortener.Presentation.Controllers
             this.jwtTokenService = jwtTokenService;
         }
 
+        [HttpGet("checkEmail")]
+        public async Task<IActionResult> CheckEmail([FromQuery] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest(new { Detail = "Email is required." });
+            }
+
+            bool emailExists = await accountService.CheckIfEmailExists(email);
+
+            return Ok(new { Exists = emailExists });
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel, [FromServices] IValidator<RegisterViewModel> validator)
         {
